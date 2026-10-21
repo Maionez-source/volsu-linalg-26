@@ -38,15 +38,18 @@ public class RationalUtils {
 
 	}
 
+	//Алексей Горох
 	public static Rational add(Rational s, Rational t) {
-		//Бакланов Иван
-		int numerator = s.getNumerator() * t.getDenominator()
-					+ t.getNumerator() * s.getDenominator();
+		int numeratorS = s.getNumerator();
+		int denominatorS = s.getDenominator();
+		int numeratorT = t.getNumerator();
+		int denominatorT = t.getDenominator();
 
-		int denominator = s.getDenominator() * t.getDenominator();
-
-		return new Rational(numerator, denominator);
-	}	
+		if(denominatorS == denominatorT){
+			return new Rational(numeratorS + numeratorT ,denominatorS);
+		}
+		return new Rational(numeratorS*denominatorT+numeratorT*denominatorS, denominatorS*denominatorT);
+	}
 
 	public static Rational add(String s, String t) {
 		return new Rational(s).add(new Rational(t))
