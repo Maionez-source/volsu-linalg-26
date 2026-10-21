@@ -1,5 +1,7 @@
 package src.edu.volsu.pimm261.linear;
 
+import java.math.BigInteger;
+
 public class RationalUtils {
 	
 	public static Integer rnd(Integer a, Integer b) {

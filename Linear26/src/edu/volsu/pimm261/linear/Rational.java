@@ -1,7 +1,7 @@
 package src.edu.volsu.pimm261.linear;
 
-public class Rational{
-// p/q, где p целое, q - натуральное, причём  нод(p,q)=1
+public class Rational implements Comparable<Rational>, Cloneable, IField<Rational>{
+// p/q, где p целое, q - натуральное, причём  ноsд(p,q)=1
 
 protected Integer numerator;
 protected Integer denominator;
@@ -34,7 +34,7 @@ public Rational() {
 	this(0);
 }
 
-public String getString() {
+public String toString() {
 	return this.getNumerator()+((this.getDenominator() == 0)?"":"/"+this.getDenominator());
 }
 
@@ -90,17 +90,17 @@ public Rational getOpposite(){
 	return new Rational(-this.numerator,this.denominator);
 }
 
-public Rational diff(Rational that) {
-	// TODO разность
-	return null;
-}
+// см. IField 
+//public Rational diff(Rational that) {
+//	return add(that.getOpposite());
+//}
 
 //Горох Алексей
 public Rational mult(Rational that) {
 	return new Rational(this.numerator * that.numerator, this.denominator * that.denominator);
 }
 
-public Rational getInverse() {
+public Rational inverse() {
 	return new Rational(this.denominator, this.numerator);
 }
 
@@ -110,7 +110,8 @@ public Rational div(Rational that) {
 }
 
 public int compareTo(Rational that) {
-	return 0; // TODO Сравнение двух чисел
+	int d = this.diff(that).getNumerator();
+	return (d>0) ? 1 : (d==0) ? 0 : -1 ; // TODO Сравнение двух чисел
 }
 
 @Override
