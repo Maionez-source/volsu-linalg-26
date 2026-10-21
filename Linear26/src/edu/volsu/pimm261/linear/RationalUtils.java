@@ -1,4 +1,5 @@
 package src.edu.volsu.pimm261.linear;
+import java.math.BigInteger;
 
 import java.math.BigInteger;
 
@@ -150,9 +151,19 @@ public class RationalUtils {
 		}
 	}
 
-	public static boolean isZero(Rational [] arr) {
-		return false; //TODO проверить, что  массив состоит только из нулей
-	}
+	public static boolean isZero(Rational[] arr){ // Тимур Иванов, начало
+  		if (arr == null || arr.length == 0) {
+   		return true;
+  		}
+
+  		for (Rational r : arr) {
+   			if (r == null || !r.isZero()) {
+    		return false;
+   			}
+  		}
+
+    return true;
+ 	} // Тимур Иванов, конец
 
 	
 }
