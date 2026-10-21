@@ -50,6 +50,13 @@ public class Rational{
 	}
 
 
+public Rational(String s) {
+	// Татаров Никита парсинг строкового представления дроби или целого числа
+	String[] parts = s.split("/");
+	numerator = Integer.parseInt(parts[0].trim());
+	denominator = (parts.length > 1) ? Integer.parseInt(parts[1].trim()) : 1;
+	reduce();
+}
 
 
 	public Rational(String s) {
@@ -79,10 +86,25 @@ public class Rational{
 		return (this.numerator == _that.numerator)&&(this.denominator == _that.denominator);
 	}
 
-	public Rational add(Rational that) {
-		//TODO Использовать приведение к общему знаменателю, чтобы избежать арифметических переполнений
-		return new Rational(this.numerator*this.denominator+that.numerator*that.denominator, this.denominator*that.denominator);
+public Rational diff(Rational that) {
+	// a/b - c/d = (a*d - c*b)/(b*d).
+	long newNumerator = (long) this.numerator * that.denominator
+			- (long) that.numerator * this.denominator;
+	long newDenominator = (long) this.denominator * that.denominator;
+	//Иович Александр
+	
+	// Сокращаем дробь до преобразования в int.
+	long a = Math.abs(newNumerator);
+	long b = newDenominator;
+	while (b != 0) {
+		long remainder = a % b;
+		a = b;
+		b = remainder;
 	}
+
+	return new Rational(Math.toIntExact(newNumerator / a),
+			Math.toIntExact(newDenominator / a));
+}
 
 	public Rational getOpposite(){
 		return new Rational(-this.numerator,this.denominator);
@@ -93,6 +115,15 @@ public class Rational{
 		return null;
 	}
 
+//Штиглец Андрей  Rational div(Rational that)
+public Rational div(Rational that) {
+	if (that == null)
+	{ 
+		throw new ArithmeticException("Division by Zero.");
+	}
+	return this.mult(that.getInverse());
+	
+}
 
 	public Rational mult(Rational that) {
 		// TODO произведение
