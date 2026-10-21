@@ -1,4 +1,7 @@
 package src.edu.volsu.pimm261.linear;
+import java.math.BigInteger;
+
+import java.math.BigInteger;
 
 public class RationalUtils {
 	
@@ -7,16 +10,32 @@ public class RationalUtils {
 	}
 	
 	public static Rational getRandom(Integer a, Integer b, Integer den_digits) {
-		Integer l = Math.round((float)Math.pow(10, den_digits-1));
-		Integer r = l*10-1;
-		Integer q = rnd(l,r);
-		return new Rational(rnd(a*q, b*q),q);
-		
-		// a <= p/q <=b
-		// aq <= p <= bq
-		// 
-		// TODO Создать случайное рациональное число a <= q <= b,
-		// имеющее не более den_digits десятичных знаков в знаменателе
+		//Бакланов Иван
+		if (a > b) {
+			throw new IllegalArgumentException("a должно быть не больше b");
+		}
+
+		if (den_digits < 1 || den_digits > 9) {
+			throw new IllegalArgumentException(
+				"Количество цифр знаменателя должно быть от 1 до 9"
+			);
+		}
+
+		ThreadLocalRandom random = ThreadLocalRandom.current();
+
+		int maxDenominator = (int) Math.pow(10, den_digits) - 1;
+		int q = random.nextInt(1, maxDenominator + 1);
+
+		int minNumerator = Math.multiplyExact(a, q);
+		int maxNumerator = Math.multiplyExact(b, q);
+
+		int p = (int) random.nextLong(
+			minNumerator,
+			(long) maxNumerator + 1
+		);
+
+		return new Rational(p, q);
+
 	}
 
 	//Алексей Горох
@@ -33,7 +52,8 @@ public class RationalUtils {
 	}
 
 	public static Rational add(String s, String t) {
-		return null; //TODO
+		return new Rational(s).add(new Rational(t))
+		//TODO Татаров Никита
 	}
 
 	public static Rational diff(Rational s, Rational t) {
@@ -118,12 +138,36 @@ public class RationalUtils {
 }
 
 	public static void sort(Rational [] arr) {
-		 //TODO сортировка массива на месте, не создавая нового массива
+		//Иович Александр
+		// Сортировка вставками по возрастанию, без нового массива.
+		for (int i = 1; i < arr.length; i++) {
+			Rational current = arr[i];
+			int j = i - 1;
+
+			// Знаменатели положительны: сравниваем крест-накрест.
+			while (j >= 0
+					&& (long) arr[j].getNumerator() * current.getDenominator()
+					> (long) current.getNumerator() * arr[j].getDenominator()) {
+				arr[j + 1] = arr[j];
+				j--;
+			}
+			arr[j + 1] = current;
+		}
 	}
 
-	public static boolean isZero(Rational [] arr) {
-		return false; //TODO проверить, что  массив состоит только из нулей
-	}
+	public static boolean isZero(Rational[] arr){ // Тимур Иванов, начало
+  		if (arr == null || arr.length == 0) {
+   		return true;
+  		}
+
+  		for (Rational r : arr) {
+   			if (r == null || !r.isZero()) {
+    		return false;
+   			}
+  		}
+
+    return true;
+ 	} // Тимур Иванов, конец
 
 	
 }
