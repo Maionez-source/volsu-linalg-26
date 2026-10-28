@@ -1,14 +1,51 @@
 package src.edu.volsu.pimm261.linear;
+import java.math.BigInteger;
 
 import java.math.BigInteger;
 
+import java.math.BigInteger;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+
 public class RationalUtils {
 	
-	public static Integer rnd(Integer a, Integer b) {
+
+	public static Rational getRandom1(Integer a, Integer b, Integer den_digits) {
+		//Бакланов Иван
+		if (a > b) {
+			throw new IllegalArgumentException("a должно быть не больше b");
+		}
+
+		if (den_digits < 1 || den_digits > 9) {
+			throw new IllegalArgumentException(
+				"Количество цифр знаменателя должно быть от 1 до 9"
+			);
+		}
+
+		ThreadLocalRandom random = ThreadLocalRandom.current();
+
+		int maxDenominator = (int) Math.pow(10, den_digits) - 1;
+		int q = random.nextInt(1, maxDenominator + 1);
+
+		int minNumerator = Math.multiplyExact(a, q);
+		int maxNumerator = Math.multiplyExact(b, q);
+
+		int p = (int) random.nextLong(
+			minNumerator,
+			(long) maxNumerator + 1
+		);
+
+		return new Rational(p, q);
+
+	}
+
+
+public static Integer rnd(Integer a, Integer b) {
 		return Math.round((float)(Math.random()*(b-a)+a));
 	}
 	
-	public static Rational getRandom(Integer a, Integer b, Integer den_digits) {
+
+public static Rational getRandom(Integer a, Integer b, Integer den_digits) {
 		Integer l = Math.round((float)Math.pow(10, den_digits-1));
 		Integer r = l*10-1;
 		Integer q = rnd(l,r);
@@ -21,12 +58,24 @@ public class RationalUtils {
 		// имеющее не более den_digits десятичных знаков в знаменателе
 	}
 
+	
+	//Алексей Горох
 	public static Rational add(Rational s, Rational t) {
-		return null; //TODO
+		int numeratorS = s.getNumerator();
+		int denominatorS = s.getDenominator();
+		int numeratorT = t.getNumerator();
+		int denominatorT = t.getDenominator();
+
+		if(denominatorS == denominatorT){
+			return new Rational(numeratorS + numeratorT ,denominatorS);
+		}
+		return new Rational(numeratorS*denominatorT+numeratorT*denominatorS, denominatorS*denominatorT);
 	}
 
 	public static Rational add(String s, String t) {
-		return null; //TODO
+		//return new Rational(s).add(new Rational(t));
+		//TODO Татаров Никита
+		return null;
 	}
 
 	public static Rational diff(Rational s, Rational t) {
@@ -52,14 +101,24 @@ public class RationalUtils {
     	return new Rational(numerator, denominator);
 	}
 
-	public static Rational[] getRandomArray(int n) {
+	// Создание массива длины n со случайными числами | 01.10.26 | Бощенко Д.А.
+	public static Rational[] getRandomArray(int n,Integer a, Integer b, Integer den_digits) {
 		Rational[] result = new Rational[n];
+		Random rand = new Random();
+		int upperLimit = 100;
+
+		for(int i = 0; i < n; i++) {
+			result[i] = new Rational(rand.nextInt(upperLimit), rand.nextInt(upperLimit));
+		}
+
 		//TODO создать массив случайных чисел
 		return result;
 	}
-	
+	//Штиглец Андрей Rational[] getConstantArray(int n, Rational c) 
 	public static Rational[] getConstantArray(int n, Rational c) {
 		Rational[] result = new Rational[n];
+			for (int i = 0; i < n; i++)
+			{result[i] = c;}
 		//TODO создать массив, где каждый элемент равен с
 		return result;
 	}
@@ -86,37 +145,61 @@ public class RationalUtils {
 	}
 
 	public static Rational avg(Rational [] arr) {
-	if (arr == null || arr.length == 0)
-		throw new IllegalArgumentException("empty array");
+		if (arr == null || arr.length == 0)
+			throw new IllegalArgumentException("empty array");
 
-	// сумма считается через BigInteger, чтобы не ловить переполнение int
-	BigInteger num = BigInteger.ZERO;
-	BigInteger den = BigInteger.ONE;
-	for (Rational r : arr) {
-		BigInteger rn = BigInteger.valueOf(r.getNumerator());
-		BigInteger rd = BigInteger.valueOf(r.getDenominator());
-		num = num.multiply(rd).add(rn.multiply(den));
-		den = den.multiply(rd);
-		BigInteger g = num.gcd(den);   // den > 0, значит g >= 1
+		// сумма считается через BigInteger, чтобы не ловить переполнение int
+		BigInteger num = BigInteger.ZERO;
+		BigInteger den = BigInteger.ONE;
+		for (Rational r : arr) {
+			BigInteger rn = BigInteger.valueOf(r.getNumerator());
+			BigInteger rd = BigInteger.valueOf(r.getDenominator());
+			num = num.multiply(rd).add(rn.multiply(den));
+			den = den.multiply(rd);
+			BigInteger g = num.gcd(den);   // den > 0, значит g >= 1
+			num = num.divide(g);
+			den = den.divide(g);
+		}
+		// делим сумму на количество элементов
+		den = den.multiply(BigInteger.valueOf(arr.length));
+		BigInteger g = num.gcd(den);
 		num = num.divide(g);
 		den = den.divide(g);
-	}
-	// делим сумму на количество элементов
-	den = den.multiply(BigInteger.valueOf(arr.length));
-	BigInteger g = num.gcd(den);
-	num = num.divide(g);
-	den = den.divide(g);
 
-	return new Rational(num.intValueExact(), den.intValueExact());
-}
+		return new Rational(num.intValueExact(), den.intValueExact());
+	}
 
 	public static void sort(Rational [] arr) {
-		 //TODO сортировка массива на месте, не создавая нового массива
+		//Иович Александр
+		// Сортировка вставками по возрастанию, без нового массива.
+		for (int i = 1; i < arr.length; i++) {
+			Rational current = arr[i];
+			int j = i - 1;
+
+			// Знаменатели положительны: сравниваем крест-накрест.
+			while (j >= 0
+					&& (long) arr[j].getNumerator() * current.getDenominator()
+					> (long) current.getNumerator() * arr[j].getDenominator()) {
+				arr[j + 1] = arr[j];
+				j--;
+			}
+			arr[j + 1] = current;
+		}
 	}
 
-	public static boolean isZero(Rational [] arr) {
-		return false; //TODO проверить, что  массив состоит только из нулей
-	}
+	public static boolean isZero(Rational[] arr){ // Тимур Иванов, начало
+  		if (arr == null || arr.length == 0) {
+   		return true;
+  		}
+
+  		for (Rational r : arr) {
+   			if (r == null || !r.isZero()) {
+    		return false;
+   			}
+  		}
+
+    return true;
+ 	} // Тимур Иванов, конец
 
 	
 }
