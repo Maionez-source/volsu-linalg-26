@@ -97,35 +97,29 @@ public class VectorSpace<T extends IField<T>> {
 	}
 	
 	
-	public boolean isZero() {
-		return false;
-	}
-	
-	public VectorSpace get1stNonZero(T that) {
-		return null;
-	}
-	
 	protected VectorSpace (ArrayList<T> arr) {						
 		this.components = arr;
 		this.dimension = arr.size();
 }
-	public VectorSpace(T constant) {
+
+	
+	
+	public VectorSpace() {
 		
 	}
-	
+//+++++++++++++++++++++++++++++++++++++++++++ Контрольная работа ++++++++++++++++++++++++++++	
 	public VectorSpace(String str) {
 		// 2/4;3/4;3+4i
 	}
 	
-	public VectorSpace() {
-		
+	public String toString() {
+		return null;
 	}
 	
 	public static <T extends IField<T> & Comparable<T>> T scalarProduct(VectorSpace<T> v1, VectorSpace<T> v2){
 		//TODO скалярное произведение векторов над линейно упорядоченным полем
 		return null;
 	}
-	
 		//TODO норма вектора над линейно упорядоченным полем
 		//TODO длина вектора над линейно упорядоченным полем
 		//TODO орт вектора над линейно упорядоченным полем
@@ -135,7 +129,8 @@ public class VectorSpace<T extends IField<T>> {
 		//TODO Получить из данного вектора новый вектор с переставленными i-й и j-й координатами
 		//TODO Проверить, все ли координаты вектора неотрицательны
 		//TODO Проверить, является ли вектор i-м базисным вектором (0<= i < dim)
-	
+		//TODO Проверить, является ли вектор нулевым
+		//TODO Создать вектор-константу (все координаты одинаковы
+		
 
-	
 } 
